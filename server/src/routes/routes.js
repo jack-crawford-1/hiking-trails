@@ -1,5 +1,5 @@
 import express from "express";
-import { helloHome, helloHello } from "../controllers/helloControllers.js";
+
 import {
   addUser,
   deleteUser,
@@ -22,10 +22,6 @@ import {
 } from "../controllers/docControllers.js";
 
 const router = express.Router();
-
-// hello world
-router.get("/", helloHome);
-router.get("/hello", helloHello);
 
 // users
 router.get("/users", getUsers);
