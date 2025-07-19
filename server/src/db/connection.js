@@ -5,10 +5,7 @@ import { MongoClient } from "mongodb";
 
 let client;
 
-async function connectDB(
-  uri = process.env.DB_URI,
-  dbName = process.env.DB_NAME
-) {
+async function connectDB(uri = process.env.URI, dbName = process.env.DB_NAME) {
   if (client) {
     return client.db(dbName);
   }
