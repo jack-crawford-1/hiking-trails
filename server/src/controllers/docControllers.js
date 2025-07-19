@@ -1,6 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+import redisClient from "../db/redisClient.js";
+
 const xApiKey = process.env.X_API_KEY;
 
 // HUTS
@@ -87,9 +89,18 @@ export async function getHutAlertById(req, res, next) {
 
 // TRACKS
 
+// Redis Cache	~0.015 to 0.027 ms VS
+// DOC API	~8.0 to 8.8 seconds
+
 export async function getAllTracks(req, res, next) {
   const url = "https://api.doc.govt.nz/v1/tracks";
   try {
+    const cacheKey = "doc_all_tracks";
+    const cached = await redisClient.get(cacheKey);
+
+    if (cached) {
+      return res.json(JSON.parse(cached));
+    }
     const response = await fetch(url, {
       headers: {
         "x-api-key": xApiKey,
@@ -97,6 +108,9 @@ export async function getAllTracks(req, res, next) {
       },
     });
     const data = await response.json();
+    await redisClient.set(cacheKey, JSON.stringify(data), {
+      EX: 60 * 60 * 6,
+    });
     res.json(data);
   } catch (err) {
     next(err);
