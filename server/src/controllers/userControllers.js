@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { connectDB } from "../db/connection.js";
+import { connectDB } from "../db/mongoDBClient.js";
 import { ObjectId } from "mongodb";
 
 dotenv.config();
