@@ -1,6 +1,9 @@
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CustomMarker } from "./CustomMarker";
+import { fetchDocTracks } from "../api/fetchDoc";
+import type { Tracks } from "./AllDocTracks";
+import convertToLatLng from "./ConvertLatLon";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const MAP_ID = import.meta.env.VITE_MAP_ID;
@@ -10,6 +13,12 @@ export default function MainMap() {
     lat: number;
     lng: number;
   } | null>(null);
+
+  const [tracks, setTracks] = useState<Tracks[]>([]);
+
+  useEffect(() => {
+    fetchDocTracks().then(setTracks).catch(console.error);
+  }, []);
 
   return (
     <APIProvider apiKey={API_KEY}>
@@ -33,9 +42,10 @@ export default function MainMap() {
         }}
       />
 
-      <CustomMarker
-        position={{ lat: -40.37422328025859, lng: 175.46232617982287 }}
-      />
+      {tracks.map((track) => {
+        const position = convertToLatLng(track.x, track.y);
+        return <CustomMarker key={track.assetId} position={position} />;
+      })}
 
       <div>
         <div>
