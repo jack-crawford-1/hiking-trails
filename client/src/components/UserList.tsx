@@ -15,7 +15,6 @@ export default function UsersList() {
   useEffect(() => {
     fetchUsers()
       .then((data) => {
-        console.log("Fetched users:", data);
         setUsers(data);
       })
       .catch(console.error);

@@ -1,7 +1,9 @@
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import { useState } from "react";
+import { CustomMarker } from "./CustomMarker";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+const MAP_ID = import.meta.env.VITE_MAP_ID;
 
 export default function MainMap() {
   const [confirmLatLng, setConfirmLatLng] = useState<{
@@ -12,9 +14,10 @@ export default function MainMap() {
   return (
     <APIProvider apiKey={API_KEY}>
       <Map
-        style={{ width: "80vw", height: "50vh" }}
-        defaultCenter={{ lat: -44.54992, lng: 144 }}
-        defaultZoom={5}
+        style={{ width: "80vw", height: "70vh" }}
+        mapId={MAP_ID}
+        defaultCenter={{ lat: -41.54992, lng: 175 }}
+        defaultZoom={8}
         gestureHandling={"greedy"}
         disableDefaultUI={true}
         onClick={(e) => {
@@ -29,6 +32,11 @@ export default function MainMap() {
           }
         }}
       />
+
+      <CustomMarker
+        position={{ lat: -40.37422328025859, lng: 175.46232617982287 }}
+      />
+
       <div>
         <div>
           <p>Last Clicked Lat Lng:</p>{" "}
