@@ -29,11 +29,17 @@ export function ClusteredMarkers() {
           </div>
         `;
 
-        return new AdvancedMarkerElement({
+        const marker = new AdvancedMarkerElement({
           map,
           position: { lat, lng },
           content: markerContent,
         });
+
+        marker.addListener("click", () => {
+          console.log("Marker clicked for track:", track);
+        });
+
+        return marker;
       });
 
       new MarkerClusterer({
@@ -41,12 +47,14 @@ export function ClusteredMarkers() {
         markers,
         renderer: {
           render: ({ count, position }) => {
+            const size = Math.min(50, 30 + count * 1.5);
+
             const svg = `
-              <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="20" cy="20" r="18" fill="#0dab44" stroke="#04ff00" stroke-width="3" />
-                <text x="20" y="25" text-anchor="middle" font-size="14" fill="#ffffff">${count}</text>
-              </svg>
-            `;
+      <svg width="${size}" height="${size}" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="20" r="18" fill="#14853d" stroke="#ffffff" stroke-width="1" />
+        <text x="20" y="25" text-anchor="middle" font-size="14" fill="#ffffff">${count}</text>
+      </svg>
+    `;
 
             const div = document.createElement("div");
             div.innerHTML = svg;
