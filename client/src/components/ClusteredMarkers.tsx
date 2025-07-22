@@ -4,7 +4,11 @@ import { fetchDocTracks } from "../api/fetchDoc";
 import convertToLatLng from "./ConvertLatLon";
 import { LocationPinSvg } from "./LocationPinSvg";
 
-export function ClusteredMarkers() {
+export function ClusteredMarkers({
+  onMarkerClick,
+}: {
+  onMarkerClick: (track: any) => void;
+}) {
   const map = useMap();
 
   useEffect(() => {
@@ -37,6 +41,7 @@ export function ClusteredMarkers() {
 
         marker.addListener("click", () => {
           console.log("Marker clicked for track:", track);
+          onMarkerClick(track);
         });
 
         return marker;
@@ -73,7 +78,7 @@ export function ClusteredMarkers() {
     return () => {
       markers.forEach((marker) => (marker.map = null));
     };
-  }, [map]);
+  }, [map, onMarkerClick]);
 
   return null;
 }

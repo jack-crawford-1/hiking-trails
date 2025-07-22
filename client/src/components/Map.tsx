@@ -1,10 +1,15 @@
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import { ClusteredMarkers } from "./ClusteredMarkers";
+import SlidingDrawer from "./SlidingDrawer";
+import { useState } from "react";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const MAP_ID = import.meta.env.VITE_MAP_ID;
 
 export default function MainMap() {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedTrack, setSelectedTrack] = useState<any>(null);
+
   return (
     <APIProvider apiKey={API_KEY}>
       <Map
@@ -15,7 +20,18 @@ export default function MainMap() {
         gestureHandling={"greedy"}
         disableDefaultUI={true}
       />
-      <ClusteredMarkers />
+      <SlidingDrawer
+        open={drawerOpen}
+        setOpen={setDrawerOpen}
+        track={selectedTrack}
+      />
+
+      <ClusteredMarkers
+        onMarkerClick={(track) => {
+          setSelectedTrack(track);
+          setDrawerOpen(true);
+        }}
+      />
     </APIProvider>
   );
 }
