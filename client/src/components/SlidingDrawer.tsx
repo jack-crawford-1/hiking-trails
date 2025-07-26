@@ -39,7 +39,9 @@ export default function SlidingDrawer({
         </div>
       </div>
 
-      {open && <div className="fixed inset-0" onClick={() => setOpen(false)} />}
+      {/* {open && <div className="fixed inset-0" onClick={() => setOpen(false)} />} */}
     </>
   );
 }
+
+// removed to allow map interaction with the sliding drawer open.

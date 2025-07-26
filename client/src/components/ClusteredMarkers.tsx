@@ -28,7 +28,8 @@ export function ClusteredMarkers({
 
         const markerContent = document.createElement("div");
         markerContent.innerHTML = `
-          <div style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;">
+          <div style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+          ">
             ${LocationPinSvg}
           </div>
         `;
@@ -55,11 +56,11 @@ export function ClusteredMarkers({
             const size = Math.min(50, 30 + count * 1.5);
 
             const svg = `
-      <svg width="${size}" height="${size}" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="20" cy="20" r="18" fill="#14853d" stroke="#ffffff" stroke-width="1" />
-        <text x="20" y="25" text-anchor="middle" font-size="14" fill="#ffffff">${count}</text>
-      </svg>
-    `;
+          <svg width="${size}" height="${size}" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="18" fill="#14853d" stroke="#ffffff" stroke-width="1" />
+            <text x="20" y="25" text-anchor="middle" font-size="14" fill="#ffffff">${count}</text>
+          </svg>
+          `;
 
             const div = document.createElement("div");
             div.innerHTML = svg;
