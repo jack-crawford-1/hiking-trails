@@ -18,7 +18,6 @@ export function TrackPolyline({ line }: Props) {
     if (!map || !line) return;
 
     const latLngPath = flattenedLine.map(([x, y], i) => {
-      console.log(`Converting point ${i}: x=${x}, y=${y}`);
       return convertToLatLng(x, y);
     });
 
