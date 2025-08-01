@@ -14,13 +14,15 @@ export default function MainMap() {
   return (
     <APIProvider apiKey={API_KEY}>
       <Map
-        style={{ width: "80vw", height: "70vh" }}
+        style={{ width: "98vw", height: "98vh" }}
         mapId={MAP_ID}
-        defaultCenter={{ lat: -41.54992, lng: 175 }}
-        defaultZoom={8}
+        colorScheme="FOLLOW_SYSTEM"
+        defaultCenter={{ lat: -40.94992, lng: 175 }}
+        defaultZoom={9}
         gestureHandling={"greedy"}
-        disableDefaultUI={true}
+        disableDefaultUI={false}
       />
+
       <SlidingDrawer
         open={drawerOpen}
         setOpen={setDrawerOpen}
