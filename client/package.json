@@ -12,6 +12,7 @@
   "dependencies": {
     "@googlemaps/markerclusterer": "^2.6.2",
     "@tailwindcss/vite": "^4.1.11",
+    "@turf/turf": "^7.2.0",
     "@vis.gl/react-google-maps": "^1.5.4",
     "maplibre-gl": "^5.6.1",
     "proj4": "^2.19.7",
