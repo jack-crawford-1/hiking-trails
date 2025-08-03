@@ -1,4 +1,4 @@
-[class$="alpha-banner"] {
+/* [class$="alpha-banner"] {
   right: auto;
   left: 50%;
   translate: -50% 0;
@@ -7,14 +7,14 @@
   max-width: 600px;
   font-size: 0.875em;
   border-radius: 10px;
-}
+} */
 
 .minimap {
   position: absolute;
-  bottom: 3rem;
+  top: 3rem;
   left: 3rem;
-  width: 50%;
-  max-width: 120px;
+  width: 100%;
+  max-width: 250px;
   aspect-ratio: 1;
   border-radius: 10px;
   overflow: hidden;
@@ -30,9 +30,9 @@
 }
 
 .camera-position-marker path {
-  fill: rgb(0, 255, 17);
-  stroke: black;
-  stroke-width: 2;
+  fill: rgb(10, 97, 23);
+  stroke: white;
+  stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 
@@ -56,12 +56,14 @@ gmp-map-3d {
   display: block;
   pointer-events: auto;
   touch-action: auto;
-  outline: 2px dashed red;
+  outline: 5px dashed #fff;
+  border-radius: 10px;
+  margin-right: 20px;
 }
 
 .camera-controls {
   position: absolute;
-  bottom: 3rem;
+  top: 3rem;
   right: 3rem;
   z-index: 10;
   background: rgba(255, 255, 255, 0.237);
