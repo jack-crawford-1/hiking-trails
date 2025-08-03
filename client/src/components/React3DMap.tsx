@@ -270,16 +270,22 @@ export function useDebouncedEffect(
   timeout: number,
   deps: DependencyList
 ) {
-  const timerRef = useRef(0);
+  // Use NodeJS.Timeout because TypeScript uses Node typings for setTimeout when @types/node is present
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Prevent clearTimeout(null) and ensure cleanup only runs if a timer is set
   useEffect(() => {
-    if (timerRef.current) {
+    if (timerRef.current !== null) {
       clearTimeout(timerRef.current);
-      timerRef.current = 0;
     }
 
     timerRef.current = setTimeout(() => effect(), timeout);
-    return () => clearTimeout(timerRef.current);
+
+    return () => {
+      if (timerRef.current !== null) {
+        clearTimeout(timerRef.current);
+      }
+    };
   }, [timeout, ...deps]);
 }
 
