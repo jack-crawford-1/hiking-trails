@@ -14,13 +14,20 @@ export default function MainMap() {
   return (
     <APIProvider apiKey={API_KEY}>
       <Map
-        style={{ width: "98vw", height: "98vh" }}
+        style={{
+          width: "100vw",
+          outline: "5px dashed #fff",
+          borderRadius: "10px",
+          marginLeft: "20px",
+        }}
         mapId={MAP_ID}
-        colorScheme="FOLLOW_SYSTEM"
-        defaultCenter={{ lat: -40.94992, lng: 175 }}
-        defaultZoom={9}
+        mapTypeId={"terrain"}
+        colorScheme="DARK"
+        defaultCenter={{ lat: -40.94992, lng: 175.4184247132748 }}
+        defaultZoom={12}
         gestureHandling={"greedy"}
-        disableDefaultUI={false}
+        disableDefaultUI={true}
+        heading={0}
       />
 
       <SlidingDrawer

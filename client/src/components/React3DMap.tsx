@@ -189,6 +189,7 @@ export const Map3D = forwardRef(
 );
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+const MAP_ID = import.meta.env.VITE_MAP_ID;
 
 type ViewCenterMarkerProps = { position: google.maps.LatLngAltitudeLiteral };
 export const ViewCenterMarker = ({ position }: ViewCenterMarkerProps) => (
@@ -217,7 +218,7 @@ export const CameraPositionMarker = ({
       height={20}
       style={{ "--camera-heading": heading } as React.CSSProperties}
     >
-      <path d={"M0,-1L-.5,1L.5,1z"}></path>
+      <path d="M0,-1 L1,0 H0.3 V1 H-0.3 V0 H-1 Z" />
     </svg>
   </AdvancedMarker>
 );
@@ -305,7 +306,7 @@ export const MiniMap = ({ camera3dProps, onMapClick }: MiniMapProps) => {
 
       const maxZoom = Math.max(
         1,
-        Math.round(24 - Math.log2(camera3dProps.range))
+        Math.round(23 - Math.log2(camera3dProps.range))
       );
 
       minimap.fitBounds(bounds, 120);
@@ -319,9 +320,10 @@ export const MiniMap = ({ camera3dProps, onMapClick }: MiniMapProps) => {
     <Map
       id={"minimap"}
       className={"minimap"}
-      mapId={"bf51a910020fa25a"}
+      mapId={MAP_ID}
+      // mapTypeId={"terrain"}
       defaultCenter={camera3dProps.center}
-      defaultZoom={10}
+      defaultZoom={20}
       onClick={onMapClick}
       disableDefaultUI={true}
       clickableIcons={true}
@@ -336,8 +338,8 @@ export const MiniMap = ({ camera3dProps, onMapClick }: MiniMapProps) => {
 };
 
 const INITIAL_VIEW_PROPS = {
-  center: { lat: -40.84453292905936, lng: 175.4184247132748, altitude: 1000 },
-  range: 5000,
+  center: { lat: -40.94992, lng: 175.4184247132748, altitude: 2000 },
+  range: 10000,
   heading: 0,
   tilt: 69,
   roll: 0,
@@ -365,70 +367,8 @@ export function Map3DExample() {
         onCameraChange={handleCameraChange}
         defaultLabelsDisabled={true}
       />
-      <div className="camera-controls">
-        <div className="group">
-          <span className="label">Rotate</span>
-          <button
-            onClick={() =>
-              setViewProps((p) => ({ ...p, heading: (p.heading + 10) % 360 }))
-            }
-          >
-            Right
-          </button>
-          <button
-            onClick={() =>
-              setViewProps((p) => ({
-                ...p,
-                heading: (p.heading - 10 + 360) % 360,
-              }))
-            }
-          >
-            Left
-          </button>
-        </div>
-        <div className="group">
-          <span className="label">Tilt</span>
-          <button
-            onClick={() =>
-              setViewProps((p) => ({ ...p, tilt: Math.max(0, p.tilt - 5) }))
-            }
-          >
-            Up
-          </button>
-          <button
-            onClick={() =>
-              setViewProps((p) => ({ ...p, tilt: Math.min(90, p.tilt + 5) }))
-            }
-          >
-            Down
-          </button>
-        </div>
-        <div className="group">
-          <span className="label">Zoom</span>
-          <button
-            onClick={() =>
-              setViewProps((p) => ({
-                ...p,
-                range: Math.max(500, p.range - 500),
-              }))
-            }
-          >
-            In
-          </button>
-          <button
-            onClick={() =>
-              setViewProps((p) => ({
-                ...p,
-                range: Math.min(30000, p.range + 500),
-              }))
-            }
-          >
-            Out
-          </button>
-        </div>
-      </div>
 
-      <MiniMap camera3dProps={viewProps} onMapClick={handleMapClick}></MiniMap>
+      {/* <MiniMap camera3dProps={viewProps} onMapClick={handleMapClick}></MiniMap> */}
     </>
   );
 }
