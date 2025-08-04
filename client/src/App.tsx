@@ -1,4 +1,5 @@
-import MainMap from "./components/Map";
+// import MainMap from "./components/Map";
+// import ThreeDApp from "./components/React3DMap.tsx";
 import MapBoxMap from "./components/MapBox.tsx";
 
 // function App() {
@@ -12,8 +13,6 @@ import MapBoxMap from "./components/MapBox.tsx";
 // }
 
 // export default App;
-
-import ThreeDApp from "./components/React3DMap.tsx";
 
 function App() {
   return (
