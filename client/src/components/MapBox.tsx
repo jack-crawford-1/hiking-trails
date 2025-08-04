@@ -1,15 +1,4 @@
-// MAPBOX Example code to render a map
-// https://docs.mapbox.com/mapbox-gl-js/guides/install/
-
-// mapboxgl.accessToken = '<your access token here>';
-// const map = new mapboxgl.Map({
-//   container: 'map', // container ID
-//   style: 'mapbox://styles/mapbox/streets-v12', // style URL
-//   center: [-74.5, 40], // starting position [lng, lat]
-//   zoom: 9 // starting zoom
-// });
-
-// BASIC WORKING EXAMPLE WITH TOPO LINES - FROM GLOBE
+// BASIC WORKING EXAMPLE WITH TOPO LINES AND 3D TERRAIN AND BUILDINGS - FROM GLOBE
 import { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -30,6 +19,42 @@ export default function MapBoxMap() {
         pitch: 60,
         bearing: -20,
         antialias: true,
+      });
+
+      mapRef.current.on("load", () => {
+        mapRef.current?.addSource("mapbox-dem", {
+          type: "raster-dem",
+          url: "mapbox://mapbox.terrain-rgb",
+          tileSize: 512,
+          maxzoom: 14,
+        });
+
+        mapRef.current?.setTerrain({ source: "mapbox-dem", exaggeration: 1 });
+
+        mapRef.current?.addLayer({
+          id: "sky",
+          type: "sky",
+          paint: {
+            "sky-type": "atmosphere",
+            "sky-atmosphere-sun": [0, -5],
+            "sky-atmosphere-sun-intensity": 3,
+          },
+        });
+
+        mapRef.current?.addLayer({
+          id: "3d-buildings",
+          source: "composite",
+          "source-layer": "building",
+          filter: ["==", "extrude", "true"],
+          type: "fill-extrusion",
+          minzoom: 15,
+          paint: {
+            "fill-extrusion-color": "#aaa",
+            "fill-extrusion-height": ["get", "height"],
+            "fill-extrusion-base": ["get", "min_height"],
+            "fill-extrusion-opacity": 0.6,
+          },
+        });
       });
     }
   }, []);
