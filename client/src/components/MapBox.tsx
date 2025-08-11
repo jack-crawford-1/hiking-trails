@@ -3,6 +3,7 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import myTrackData from "../../public/allDocTracks.json";
 import convertToLatLng from "./ConvertLatLon";
+import type { Feature, Point } from "geojson";
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_GL_API_KEY;
 
@@ -165,6 +166,25 @@ export default function MapBoxMap() {
             "fill-extrusion-color": "#ffffff",
             "fill-extrusion-opacity": 0.8,
           },
+        });
+
+        mapRef.current!.on("click", "marker-point", (e) => {
+          const feature = e.features?.[0] as Feature<Point> | undefined;
+          if (!feature) return;
+
+          const coords = feature.geometry.coordinates as [number, number];
+          const props = feature.properties as { name?: string } | undefined;
+
+          document
+            .querySelectorAll(".mapboxgl-popup")
+            .forEach((p) => p.remove());
+
+          new mapboxgl.Popup({ closeOnClick: true, offset: 12 })
+            .setLngLat(coords)
+            .setHTML(`${props?.name}`)
+            .addTo(mapRef.current!);
+
+          mapRef.current!.flyTo({ center: coords, zoom: 15 });
         });
 
         mapRef.current!.loadImage("/iss.png", async (error, image) => {
