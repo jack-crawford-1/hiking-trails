@@ -22,14 +22,55 @@ export default function MapBoxMap() {
       });
 
       mapRef.current.on("load", () => {
-        mapRef.current?.addSource("mapbox-dem", {
+        mapRef.current!.addSource("mapbox-dem", {
           type: "raster-dem",
           url: "mapbox://mapbox.terrain-rgb",
-          tileSize: 512,
-          maxzoom: 14,
         });
 
-        mapRef.current?.setTerrain({ source: "mapbox-dem", exaggeration: 1 });
+        mapRef.current!.addSource("marker", {
+          type: "geojson",
+          data: {
+            type: "FeatureCollection",
+            features: [
+              {
+                type: "Feature",
+                properties: {},
+                geometry: {
+                  type: "Point",
+                  coordinates: [174.7762, -41.2865],
+                },
+              },
+              {
+                type: "Feature",
+                properties: {},
+                geometry: {
+                  type: "Point",
+                  coordinates: [174.9762, -41.5865],
+                },
+              },
+            ],
+          },
+        });
+
+        mapRef.current!.loadImage("/m2.png", (error, image) => {
+          if (error || !image) throw error;
+
+          if (!mapRef.current!.hasImage("custom-marker")) {
+            mapRef.current!.addImage("custom-marker", image);
+          }
+
+          mapRef.current!.addLayer({
+            id: "marker-point",
+            type: "symbol",
+            source: "marker",
+            layout: {
+              "icon-image": "custom-marker",
+              "icon-size": 0.13,
+            },
+          });
+        });
+
+        mapRef.current!.setTerrain({ source: "mapbox-dem", exaggeration: 1 });
 
         mapRef.current?.addLayer({
           id: "sky",
@@ -41,7 +82,7 @@ export default function MapBoxMap() {
           },
         });
 
-        mapRef.current?.addLayer({
+        mapRef.current!.addLayer({
           id: "3d-buildings",
           source: "composite",
           "source-layer": "building",
