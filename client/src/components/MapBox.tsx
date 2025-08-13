@@ -4,16 +4,13 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import myTrackData from "../../public/allDocTracks.json";
 import convertToLatLng from "./ConvertLatLon";
 import type { Feature, Point } from "geojson";
+import { applyLayerStyles, bindReapplyOnStyleData } from "./styles/Layers";
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_GL_API_KEY;
 
 export default function MapBoxMap() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
-
-  function zoomBasedReveal(targetValue: number): mapboxgl.Expression {
-    return ["interpolate", ["linear"], ["zoom"], 5, 0, 12, targetValue];
-  }
 
   async function getIssGeoJSON(): Promise<GeoJSON.FeatureCollection> {
     const res = await fetch("https://api.wheretheiss.at/v1/satellites/25544");
@@ -40,9 +37,11 @@ export default function MapBoxMap() {
       mapRef.current = new mapboxgl.Map({
         container: mapContainerRef.current!,
         style: "mapbox://styles/mapbox/outdoors-v12",
+        // style: "mapbox://styles/mapbox/standard-satellite",
+        // style: "mapbox://styles/mapboxuser671/cme95gbjv003g01r920xo5juj",
         center: [174.7762, -41.2865],
-        zoom: 5.5,
-        pitch: 60,
+        zoom: 8.5,
+        pitch: 20,
         bearing: 0,
         antialias: true,
         attributionControl: false,
@@ -72,39 +71,16 @@ export default function MapBoxMap() {
           }),
         };
 
-        type PaintProp = Parameters<mapboxgl.Map["setPaintProperty"]>[1];
-
-        function setPaint(id: string, prop: PaintProp, value: any) {
-          if (mapRef.current?.getLayer(id))
-            mapRef.current.setPaintProperty(id, prop, value);
-        }
-
-        function applyTopoPalette() {
-          const colors = {
-            land: "#efe6d1",
-            landuse: "#91b48b",
-            veg: "#81b48b",
-            water: "#cfe6f7",
-            waterLine: "#9fcae6",
-          };
-
-          setPaint("land", "background-color", colors.land);
-          setPaint("landcover", "fill-color", colors.veg);
-          setPaint("landuse", "fill-color", colors.landuse);
-          setPaint("water", "fill-color", colors.water);
-          setPaint("waterway", "line-color", colors.waterLine);
-          setPaint("water-shadow", "fill-color", colors.water);
-          setPaint("waterway-shadow", "line-color", colors.waterLine);
-        }
-
-        applyTopoPalette();
+        applyLayerStyles(mapRef.current!);
+        bindReapplyOnStyleData(mapRef.current!);
+        // console.log(mapRef.current!.getStyle().layers);
 
         mapRef.current!.addSource("marker", {
           type: "geojson",
           data: markerGeoJSON,
         });
 
-        mapRef.current!.loadImage("/m8.png", (error, image) => {
+        mapRef.current!.loadImage("/m9.png", (error, image) => {
           if (error || !image) throw error;
 
           if (!mapRef.current!.hasImage("custom-marker")) {
@@ -123,6 +99,9 @@ export default function MapBoxMap() {
         });
 
         const hour = new Date().getHours();
+
+        // const hour = 12;
+        console.log("hour", hour);
         const skyColor = hour < 6 || hour > 18 ? "#0b1d40" : "#87ceeb";
 
         mapRef.current!.addLayer({
@@ -137,7 +116,6 @@ export default function MapBoxMap() {
         });
 
         mapRef.current!.setRain({
-          density: zoomBasedReveal(1),
           intensity: 0.4,
           color: "#a8adbc",
           opacity: 0.7,
@@ -184,7 +162,7 @@ export default function MapBoxMap() {
             .setHTML(`${props?.name}`)
             .addTo(mapRef.current!);
 
-          mapRef.current!.flyTo({ center: coords, zoom: 15 });
+          mapRef.current!.flyTo({ center: coords, zoom: 16, pitch: 150 });
         });
 
         mapRef.current!.loadImage("/iss.png", async (error, image) => {
