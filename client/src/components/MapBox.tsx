@@ -4,7 +4,6 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import myTrackData from "../../public/allDocTracks.json";
 import convertToLatLng from "./ConvertLatLon";
 import type { Feature, Point } from "geojson";
-import { applyLayerStyles, bindReapplyOnStyleData } from "./styles/Layers";
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_GL_API_KEY;
 
@@ -36,9 +35,9 @@ export default function MapBoxMap() {
     if (!mapRef.current) {
       mapRef.current = new mapboxgl.Map({
         container: mapContainerRef.current!,
-        style: "mapbox://styles/mapbox/outdoors-v12",
+        // style: "mapbox://styles/mapbox/outdoors-v12",
         // style: "mapbox://styles/mapbox/standard-satellite",
-        // style: "mapbox://styles/mapboxuser671/cme95gbjv003g01r920xo5juj",
+        style: "mapbox://styles/mapboxuser671/cme95gbjv003g01r920xo5juj",
         center: [174.7762, -41.2865],
         zoom: 8.5,
         pitch: 20,
@@ -48,12 +47,6 @@ export default function MapBoxMap() {
       });
 
       mapRef.current.on("load", () => {
-        mapRef.current!.addSource("mapbox-dem", {
-          type: "raster-dem",
-          url: "mapbox://mapbox.terrain-rgb",
-        });
-        mapRef.current!.setTerrain({ source: "mapbox-dem", exaggeration: 1.5 });
-
         const markerGeoJSON: GeoJSON.FeatureCollection = {
           type: "FeatureCollection",
           features: myTrackData.map((track: any) => {
@@ -70,10 +63,6 @@ export default function MapBoxMap() {
             };
           }),
         };
-
-        applyLayerStyles(mapRef.current!);
-        bindReapplyOnStyleData(mapRef.current!);
-        // console.log(mapRef.current!.getStyle().layers);
 
         mapRef.current!.addSource("marker", {
           type: "geojson",
@@ -99,9 +88,6 @@ export default function MapBoxMap() {
         });
 
         const hour = new Date().getHours();
-
-        // const hour = 12;
-        console.log("hour", hour);
         const skyColor = hour < 6 || hour > 18 ? "#0b1d40" : "#87ceeb";
 
         mapRef.current!.addLayer({
@@ -113,17 +99,6 @@ export default function MapBoxMap() {
             "sky-atmosphere-sun": [180, 60],
             "sky-atmosphere-sun-intensity": hour < 6 || hour > 18 ? 2 : 15,
           },
-        });
-
-        mapRef.current!.setRain({
-          intensity: 0.4,
-          color: "#a8adbc",
-          opacity: 0.7,
-          "vignette-color": "#464646",
-          direction: [0, 80],
-          "droplet-size": [1.6, 4.2],
-          "distortion-strength": 0.7,
-          "center-thinning": 0,
         });
 
         mapRef.current!.setFog({
