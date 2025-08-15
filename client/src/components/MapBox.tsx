@@ -40,13 +40,42 @@ export default function MapBoxMap() {
         style: "mapbox://styles/mapboxuser671/cme95gbjv003g01r920xo5juj",
         center: [174.7762, -41.2865],
         zoom: 8.5,
-        pitch: 20,
+        pitch: 50,
         bearing: 0,
         antialias: true,
         attributionControl: false,
       });
 
       mapRef.current.on("load", () => {
+        (mapRef.current as any).addSource("raster-array-source", {
+          type: "raster-array",
+          url: "mapbox://rasterarrayexamples.gfs-winds",
+          tileSize: 512,
+        });
+
+        (mapRef.current as any).addLayer({
+          id: "wind-layer",
+          type: "raster-particle",
+          source: "raster-array-source",
+          "source-layer": "10winds",
+          paint: {
+            "raster-particle-speed-factor": 0.4,
+            "raster-particle-fade-opacity-factor": 0.9,
+            "raster-particle-reset-rate-factor": 0.4,
+            "raster-particle-count": 4000,
+            "raster-particle-max-speed": 40,
+            "raster-particle-color": [
+              "interpolate",
+              ["linear"],
+              ["raster-particle-speed"],
+              1.5,
+              "rgba(255,255,255,1)",
+              69.44,
+              "rgba(0,0,0,1)",
+            ],
+          },
+        });
+
         const markerGeoJSON: GeoJSON.FeatureCollection = {
           type: "FeatureCollection",
           features: myTrackData.map((track: any) => {
@@ -69,7 +98,7 @@ export default function MapBoxMap() {
           data: markerGeoJSON,
         });
 
-        mapRef.current!.loadImage("/m9.png", (error, image) => {
+        mapRef.current!.loadImage("/m13.png", (error, image) => {
           if (error || !image) throw error;
 
           if (!mapRef.current!.hasImage("custom-marker")) {
@@ -82,7 +111,10 @@ export default function MapBoxMap() {
             source: "marker",
             layout: {
               "icon-image": "custom-marker",
-              "icon-size": 0.09,
+              "icon-size": 0.6,
+              "icon-rotation-alignment": "viewport",
+              "icon-pitch-alignment": "viewport",
+              "icon-anchor": "bottom",
             },
           });
         });
@@ -159,6 +191,7 @@ export default function MapBoxMap() {
             layout: {
               "icon-image": "iss-icon",
               "icon-size": 0.12,
+              "icon-anchor": "bottom",
             },
           });
 
