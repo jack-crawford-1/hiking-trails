@@ -1,15 +1,18 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import myTrackData from "../../public/allDocTracks.json";
 import convertToLatLng from "./ConvertLatLon";
 import type { Feature, Point } from "geojson";
+import HeatmapAddon from "./TracksHeatmap";
+import tracks from "../../public/allDocTracks.json";
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_GL_API_KEY;
 
 export default function MapBoxMap() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
+  const [mapInstance, setMapInstance] = useState<mapboxgl.Map | null>(null);
 
   async function getIssGeoJSON(): Promise<GeoJSON.FeatureCollection> {
     const res = await fetch("https://api.wheretheiss.at/v1/satellites/25544");
@@ -46,35 +49,39 @@ export default function MapBoxMap() {
         attributionControl: false,
       });
 
-      mapRef.current.on("load", () => {
-        (mapRef.current as any).addSource("raster-array-source", {
-          type: "raster-array",
-          url: "mapbox://rasterarrayexamples.gfs-winds",
-          tileSize: 512,
-        });
+      setMapInstance(mapRef.current);
 
-        (mapRef.current as any).addLayer({
-          id: "wind-layer",
-          type: "raster-particle",
-          source: "raster-array-source",
-          "source-layer": "10winds",
-          paint: {
-            "raster-particle-speed-factor": 0.4,
-            "raster-particle-fade-opacity-factor": 0.9,
-            "raster-particle-reset-rate-factor": 0.4,
-            "raster-particle-count": 4000,
-            "raster-particle-max-speed": 40,
-            "raster-particle-color": [
-              "interpolate",
-              ["linear"],
-              ["raster-particle-speed"],
-              1.5,
-              "rgba(255,255,255,1)",
-              69.44,
-              "rgba(0,0,0,1)",
-            ],
-          },
-        });
+      new mapboxgl.Marker().setLngLat([30.5, 50.5]).addTo(mapRef.current!);
+
+      mapRef.current.on("load", () => {
+        // (mapRef.current as any).addSource("raster-array-source", {
+        //   type: "raster-array",
+        //   url: "mapbox://rasterarrayexamples.gfs-winds",
+        //   tileSize: 512,
+        // });
+
+        // (mapRef.current as any).addLayer({
+        //   id: "wind-layer",
+        //   type: "raster-particle",
+        //   source: "raster-array-source",
+        //   "source-layer": "10winds",
+        //   paint: {
+        //     "raster-particle-speed-factor": 0.4,
+        //     "raster-particle-fade-opacity-factor": 0.9,
+        //     "raster-particle-reset-rate-factor": 0.4,
+        //     "raster-particle-count": 4000,
+        //     "raster-particle-max-speed": 40,
+        //     "raster-particle-color": [
+        //       "interpolate",
+        //       ["linear"],
+        //       ["raster-particle-speed"],
+        //       1.5,
+        //       "rgba(255,255,255,1)",
+        //       69.44,
+        //       "rgba(0,0,0,1)",
+        //     ],
+        //   },
+        // });
 
         const markerGeoJSON: GeoJSON.FeatureCollection = {
           type: "FeatureCollection",
@@ -216,6 +223,19 @@ export default function MapBoxMap() {
   }, []);
 
   return (
-    <div ref={mapContainerRef} className="map-container w-full h-[600px]" />
+    <>
+      <div
+        ref={mapContainerRef}
+        className="map-container w-[1200px] h-[600px]"
+      />
+      {mapInstance && (
+        <HeatmapAddon
+          map={mapInstance}
+          tracks={tracks}
+          layerPrefix="tracks"
+          showPointsAtZoom={14}
+        />
+      )}
+    </>
   );
 }
