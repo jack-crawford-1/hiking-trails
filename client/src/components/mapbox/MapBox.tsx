@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import tracks from "./data/allDocTracks.json";
-// import tracks from "../../AllDocTracks";
 import convertToLatLng from "./utils/ConvertLatLon";
 import type { Feature, Point } from "geojson";
 import HeatmapAddon from "./utils/TracksHeatmap";
@@ -47,6 +46,7 @@ export default function MapBoxMap() {
               },
               properties: {
                 name: track.name,
+                assetId: track.assetId,
               },
             };
           }),
@@ -117,7 +117,13 @@ export default function MapBoxMap() {
           if (!feature) return;
 
           const coords = feature.geometry.coordinates as [number, number];
-          const props = feature.properties as { name?: string } | undefined;
+          // const props = feature.properties as { name?: string } | undefined;
+          const props = feature.properties as
+            | { assetId?: string; name?: string }
+            | undefined;
+
+          console.log(`Walk name: ${props?.name}`);
+          console.log(`Asset ID: ${props?.assetId}`);
 
           document
             .querySelectorAll(".mapboxgl-popup")
@@ -151,3 +157,8 @@ export default function MapBoxMap() {
     </>
   );
 }
+
+// TODO
+// check asset ID from clicked marker (JSON) and comare with AllDocTracks.TSX results from DOC API using the same Asset ID.
+// DOC API data has array of track details for polyLine
+// JSON just has single marker with ID and name
