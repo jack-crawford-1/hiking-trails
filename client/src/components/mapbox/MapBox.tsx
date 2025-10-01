@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import myTrackData from "../../public/allDocTracks.json";
-import convertToLatLng from "./ConvertLatLon";
+import tracks from "./data/allDocTracks.json";
+// import tracks from "../../AllDocTracks";
+import convertToLatLng from "./utils/ConvertLatLon";
 import type { Feature, Point } from "geojson";
-import HeatmapAddon from "./TracksHeatmap";
-import tracks from "../../public/allDocTracks.json";
+import HeatmapAddon from "./utils/TracksHeatmap";
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_GL_API_KEY;
 
@@ -13,34 +13,17 @@ export default function MapBoxMap() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const [mapInstance, setMapInstance] = useState<mapboxgl.Map | null>(null);
-
-  async function getIssGeoJSON(): Promise<GeoJSON.FeatureCollection> {
-    const res = await fetch("https://api.wheretheiss.at/v1/satellites/25544");
-    const { latitude, longitude } = await res.json();
-    return {
-      type: "FeatureCollection",
-      features: [
-        {
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [longitude, latitude],
-          },
-          properties: {},
-        },
-      ],
-    };
-  }
+  // const LINZ_API_KEY = import.meta.env.VITE_LINZ_API_KEY;
 
   useEffect(() => {
-    let issInterval: NodeJS.Timeout;
-
     if (!mapRef.current) {
       mapRef.current = new mapboxgl.Map({
         container: mapContainerRef.current!,
         // style: "mapbox://styles/mapbox/outdoors-v12",
         // style: "mapbox://styles/mapbox/standard-satellite",
         style: "mapbox://styles/mapboxuser671/cme95gbjv003g01r920xo5juj",
+        // style: `https://basemaps.linz.govt.nz/v1/tiles/topographic/EPSG:3857/style.json?api=${LINZ_API_KEY}`,
+
         center: [174.7762, -41.2865],
         zoom: 8.5,
         pitch: 50,
@@ -54,38 +37,9 @@ export default function MapBoxMap() {
       new mapboxgl.Marker().setLngLat([30.5, 50.5]).addTo(mapRef.current!);
 
       mapRef.current.on("load", () => {
-        // (mapRef.current as any).addSource("raster-array-source", {
-        //   type: "raster-array",
-        //   url: "mapbox://rasterarrayexamples.gfs-winds",
-        //   tileSize: 512,
-        // });
-
-        // (mapRef.current as any).addLayer({
-        //   id: "wind-layer",
-        //   type: "raster-particle",
-        //   source: "raster-array-source",
-        //   "source-layer": "10winds",
-        //   paint: {
-        //     "raster-particle-speed-factor": 0.4,
-        //     "raster-particle-fade-opacity-factor": 0.9,
-        //     "raster-particle-reset-rate-factor": 0.4,
-        //     "raster-particle-count": 4000,
-        //     "raster-particle-max-speed": 40,
-        //     "raster-particle-color": [
-        //       "interpolate",
-        //       ["linear"],
-        //       ["raster-particle-speed"],
-        //       1.5,
-        //       "rgba(255,255,255,1)",
-        //       69.44,
-        //       "rgba(0,0,0,1)",
-        //     ],
-        //   },
-        // });
-
         const markerGeoJSON: GeoJSON.FeatureCollection = {
           type: "FeatureCollection",
-          features: myTrackData.map((track: any) => {
+          features: tracks.map((track: any) => {
             const { lng, lat } = convertToLatLng(track.x, track.y);
             return {
               type: "Feature",
@@ -178,48 +132,8 @@ export default function MapBoxMap() {
 
           mapRef.current!.flyTo({ center: coords, zoom: 16, pitch: 150 });
         });
-
-        mapRef.current!.loadImage("/iss.png", async (error, image) => {
-          if (error || !image) throw error;
-
-          mapRef.current!.addImage("iss-icon", image);
-
-          const initialGeoJSON = await getIssGeoJSON();
-
-          mapRef.current!.addSource("iss", {
-            type: "geojson",
-            data: initialGeoJSON,
-          });
-
-          mapRef.current!.addLayer({
-            id: "iss-layer",
-            type: "symbol",
-            source: "iss",
-            layout: {
-              "icon-image": "iss-icon",
-              "icon-size": 0.12,
-              "icon-anchor": "bottom",
-            },
-          });
-
-          issInterval = setInterval(async () => {
-            const updatedGeoJSON = await getIssGeoJSON();
-            const source = mapRef.current!.getSource(
-              "iss"
-            ) as mapboxgl.GeoJSONSource;
-            source.setData(updatedGeoJSON);
-          }, 2000);
-        });
       });
     }
-
-    return () => {
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-      }
-      clearInterval(issInterval);
-    };
   }, []);
 
   return (

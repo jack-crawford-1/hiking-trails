@@ -23,5 +23,10 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    "todelete/Test.tsx",
+    "todelete/LocationPinSvg.ts",
+    "todelete/Layers.ts"
+  ]
 }
