@@ -32,13 +32,14 @@ export default function AllDocTracks() {
   );
 
   return (
-    <div>
+    <div className="w-[1000px]">
       <div>
         <label htmlFor="assetId-select">Select Asset ID: </label>
         <select
           id="assetId-select"
           value={selectedAssetId}
           onChange={(e) => setSelectedAssetId(e.target.value)}
+          className="bg-gray-200 py-2 pl-2"
         >
           {tracks.map((track) => (
             <option key={track.assetId} value={track.assetId}>

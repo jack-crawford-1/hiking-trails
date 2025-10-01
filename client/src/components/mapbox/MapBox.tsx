@@ -13,16 +13,14 @@ export default function MapBoxMap() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const [mapInstance, setMapInstance] = useState<mapboxgl.Map | null>(null);
-  // const LINZ_API_KEY = import.meta.env.VITE_LINZ_API_KEY;
 
   useEffect(() => {
     if (!mapRef.current) {
       mapRef.current = new mapboxgl.Map({
         container: mapContainerRef.current!,
+        style: "mapbox://styles/mapboxuser671/cme95gbjv003g01r920xo5juj",
         // style: "mapbox://styles/mapbox/outdoors-v12",
         // style: "mapbox://styles/mapbox/standard-satellite",
-        style: "mapbox://styles/mapboxuser671/cme95gbjv003g01r920xo5juj",
-        // style: `https://basemaps.linz.govt.nz/v1/tiles/topographic/EPSG:3857/style.json?api=${LINZ_API_KEY}`,
 
         center: [174.7762, -41.2865],
         zoom: 8.5,
@@ -140,7 +138,7 @@ export default function MapBoxMap() {
     <>
       <div
         ref={mapContainerRef}
-        className="map-container w-[1200px] h-[600px]"
+        className="map-container w-[1000px] h-[600px]"
       />
       {mapInstance && (
         <HeatmapAddon
