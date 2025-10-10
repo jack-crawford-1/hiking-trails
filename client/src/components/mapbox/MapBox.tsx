@@ -142,10 +142,7 @@ export default function MapBoxMap() {
 
   return (
     <>
-      <div
-        ref={mapContainerRef}
-        className="map-container w-[1000px] h-[600px]"
-      />
+      <div ref={mapContainerRef} className="map-container w-full h-[700px]" />
       {mapInstance && (
         <HeatmapAddon
           map={mapInstance}

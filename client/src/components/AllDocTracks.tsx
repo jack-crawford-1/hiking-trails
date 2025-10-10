@@ -39,7 +39,7 @@ export default function AllDocTracks() {
           id="assetId-select"
           value={selectedAssetId}
           onChange={(e) => setSelectedAssetId(e.target.value)}
-          className="bg-gray-200 py-2 pl-2"
+          className="bg-gray-700 py-2 pl-2"
         >
           {tracks.map((track) => (
             <option key={track.assetId} value={track.assetId}>
