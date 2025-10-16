@@ -3,12 +3,16 @@ export async function fetchDocTracks() {
     const response = await fetch("/api/tracks");
 
     if (!response.ok) {
-      throw new Error("Failed to fetch tracks");
+      const text = await response.text();
+      console.error("Backend error:", text);
+      throw new Error(`Failed to fetch tracks: ${response.status}`);
     }
 
     const data = await response.json();
-    return data;
+
+    return Array.isArray(data) ? data : data.items || [];
   } catch (error) {
-    throw error;
+    console.error("fetchDocTracks() error:", error);
+    return [];
   }
 }
